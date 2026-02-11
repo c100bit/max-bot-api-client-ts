@@ -1,0 +1,50 @@
+version: '3'
+
+vars:
+  NODE_VERSION: "18.18.0"
+
+tasks:
+  default:
+    desc: Показать доступные задачи
+    cmds:
+      - task --list
+
+  build:
+    desc: Собрать проект в dist
+    cmds:
+      - echo "Сборка проекта..."
+      - npm run build
+    generates:
+      - dist/index.js
+      - dist/index.d.ts
+
+  clean:
+    desc: Очистить директорию dist
+    cmds:
+      - echo "Очистка dist..."
+      - rm -rf dist
+
+  rebuild:
+    desc: Очистить и пересобрать проект
+    deps:
+      - clean
+    cmds:
+      - task: build
+
+  watch:
+    desc: Собрать проект в режиме наблюдения
+    cmds:
+      - echo "Сборка в режиме наблюдения..."
+      - npx tsc --watch
+
+  lint:
+    desc: Запустить линтер
+    cmds:
+      - npm run lint
+
+  prepare:
+    desc: Подготовить проект перед публикацией (линт + сборка)
+    cmds:
+      - echo "Подготовка к публикации..."
+      - task: lint
+      - task: build
