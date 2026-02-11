@@ -38,7 +38,7 @@ export class Polling {
             await new Promise((resolve) => {
               setTimeout(resolve, RETRY_INTERVAL);
             });
-            return;
+            continue;
           }
         }
         throw err;
