@@ -27,9 +27,12 @@ class Polling {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError')
                             return;
-                        if (err.name === 'FetchError'
-                            || (err instanceof api_1.MaxError && err.status === 429)
-                            || (err instanceof api_1.MaxError && err.status >= 500)) {
+                        // Handle network errors: FetchError, TypeError with "fetch failed", and server errors
+                        const isNetworkError = err.name === 'FetchError' ||
+                            (err.name === 'TypeError' && err.message.includes('fetch failed')) ||
+                            (err instanceof api_1.MaxError && err.status === 429) ||
+                            (err instanceof api_1.MaxError && err.status >= 500);
+                        if (isNetworkError) {
                             debug(`Failed to fetch updates, retrying after ${RETRY_INTERVAL}ms.`, err);
                             await new Promise((resolve) => {
                                 setTimeout(resolve, RETRY_INTERVAL);
